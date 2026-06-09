@@ -928,7 +928,16 @@ body {
 <!-- ══ DAILY FEED ══ -->
 <div class="section" id="tab-feed">
   <div class="info-box info-blue">
-    🤖 <strong style="color:var(--text)">AI-powered.</strong> Fetches real cybersecurity news from the web and builds a personalised daily learning plan just for you.
+    🤖 <strong style="color:var(--text)">AI-powered.</strong> Fetches real cybersecurity news and builds a personalised daily learning plan just for you.
+  </div>
+
+  <!-- DEBUG TEST -->
+  <div class="card" id="debugBox">
+    <div style="font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:10px;">🔧 Connection Test</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">Tap below to test your Gemini key and see the exact response or error.</div>
+    <button class="btn-gen" id="testBtn" onclick="testGemini()">🧪 Test Gemini Connection</button>
+    <div class="loader" id="testBar"></div>
+    <pre id="testResult" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--green);white-space:pre-wrap;word-break:break-all;display:none;margin-top:8px;max-height:200px;overflow-y:auto;line-height:1.6;"></pre>
   </div>
   <button class="btn-gen" id="feedNewsBtn" onclick="generateNewsFeed()">📰 Fetch Today's Cyber News</button>
   <div class="loader" id="newsBar"></div>
@@ -1308,7 +1317,44 @@ async function callAI(prompt, btnId, barId){
   }
 }
 
-function noKeyBox(areaId){
+// ═══ DEBUG TEST ═══
+async function testGemini(){
+  const k=getKey();
+  const out=document.getElementById('testResult');
+  out.style.display='block';
+  if(!k){ out.textContent='❌ No API key stored. Go to setup and add your key.'; return; }
+  out.textContent='⏳ Sending test request to Gemini...\nKey: '+k.slice(0,8)+'...'+k.slice(-4)+'\n';
+  document.getElementById('testBtn').disabled=true;
+  document.getElementById('testBar').classList.add('show');
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`;
+  try{
+    const res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{role:'user',parts:[{text:'Say "Hello CyberMind" and nothing else.'}]}],
+        generationConfig:{maxOutputTokens:20}
+      })
+    });
+    const raw=await res.text();
+    if(res.ok){
+      const data=JSON.parse(raw);
+      const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'(no text)';
+      out.textContent='✅ SUCCESS!\nStatus: '+res.status+'\nGemini replied: '+reply+'\n\nYour key works. If news still fails, tap Fetch News again.';
+    } else {
+      out.textContent='❌ API ERROR\nStatus: '+res.status+'\n\nFull response:\n'+raw;
+    }
+  }catch(e){
+    out.textContent='❌ NETWORK ERROR\nType: '+e.name+'\nMessage: '+e.message+'\n\nThis means:\n'+(
+      e.message.includes('fetch')?
+      '→ CORS block. Your GitHub Pages URL may not be fully active yet.\n→ Wait 2-3 minutes after publishing and try again.\n→ Make sure you opened the GITHUB PAGES URL, not the local file.':
+      '→ Check your internet connection.'
+    );
+  }finally{
+    document.getElementById('testBtn').disabled=false;
+    document.getElementById('testBar').classList.remove('show');
+  }
+}
   document.getElementById(areaId).innerHTML=`<div class="no-key-box"><h3>🔑 No Gemini API Key</h3><p>Add your free Google Gemini API key to unlock the news feed, daily plans and quiz.</p><button class="btn-primary" style="max-width:200px;margin:0 auto;display:block" onclick="showSetup()">Add API Key</button></div>`;
 }
 
