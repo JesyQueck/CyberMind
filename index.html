@@ -1307,7 +1307,7 @@ async function callAI(prompt,btnId,barId){
   let lastError='';
   for(let i=0;i<keys.length;i++){
     try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='+keys[i],{method:'POST',headers:{'Content-Type':'application/json'},body});
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+keys[i],{method:'POST',headers:{'Content-Type':'application/json'},body});
       if(res.ok){
         const data=await res.json();
         const text=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||null;
@@ -1347,7 +1347,7 @@ async function testGemini(){
     const k=keys[i];
     out.textContent+='KEY '+(i+1)+' ('+k.slice(0,8)+'...'+k.slice(-4)+'):\n';
     try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='+k,{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+k,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({contents:[{role:'user',parts:[{text:'Say "Hello CyberMind" only.'}]}],generationConfig:{maxOutputTokens:20}})
