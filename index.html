@@ -50,14 +50,20 @@ body {
   background: var(--bg);
   z-index: 9999;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 24px;
+  align-items: center; justify-content: flex-start;
+  padding: 0;
+  overflow-y: auto;
 }
 .setup-screen.hidden { display: none; }
-
+.setup-inner {
+  width: 100%; max-width: 420px;
+  padding: 40px 24px 40px;
+  display: flex; flex-direction: column;
+  align-items: center;
+}
 .setup-logo {
   font-family: var(--mono);
-  font-size: 30px; font-weight: 700;
+  font-size: 28px; font-weight: 700;
   color: var(--green);
   letter-spacing: 4px;
   margin-bottom: 4px;
@@ -66,31 +72,31 @@ body {
 .setup-sub {
   font-family: var(--mono);
   font-size: 11px; color: var(--text3);
-  letter-spacing: 3px; margin-bottom: 32px;
+  letter-spacing: 3px; margin-bottom: 28px;
 }
 .setup-box {
   background: var(--card);
   border: 1px solid var(--border2);
   border-radius: 20px;
-  padding: 28px 24px;
-  width: 100%; max-width: 420px;
+  padding: 24px 20px;
+  width: 100%;
 }
 .setup-box h2 {
-  font-size: 18px; font-weight: 700;
+  font-size: 17px; font-weight: 700;
   color: var(--white); margin-bottom: 12px;
 }
 .setup-box p {
-  font-size: 14px; color: var(--text2);
-  line-height: 1.7; margin-bottom: 20px;
+  font-size: 13px; color: var(--text2);
+  line-height: 1.7; margin-bottom: 16px;
 }
 .setup-box p a { color: var(--blue); text-decoration: none; }
 .setup-box p strong { color: var(--text); }
 .setup-note {
   background: var(--bg3);
   border-radius: var(--r8);
-  padding: 12px 14px;
-  font-size: 13px; color: var(--text2);
-  line-height: 1.6; margin-bottom: 18px;
+  padding: 10px 12px;
+  font-size: 12px; color: var(--text2);
+  line-height: 1.6; margin-bottom: 16px;
 }
 .api-input {
   background: var(--bg);
@@ -827,31 +833,26 @@ body {
 
 <!-- ══ SETUP SCREEN ══ -->
 <div class="setup-screen" id="setupScreen">
+  <div class="setup-inner">
   <div class="setup-logo">CYBER<em>MIND</em></div>
   <div class="setup-sub">// DAILY CYBERSECURITY TRAINER</div>
   <div class="setup-box">
-    <h2>⚠️ Must Be Hosted Online First</h2>
+    <h2>Connect Google Gemini AI 🤖</h2>
     <p>
-      Android Chrome blocks AI calls from local files. You need to host this app online once — it's <strong>free and takes 2 minutes</strong> using Netlify Drop.<br><br>
-      <strong>Step 1 — Host the app:</strong><br>
-      👉 Go to <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a><br>
-      Drag and drop this HTML file onto the page.<br>
-      You'll get a free link like <em>random-name.netlify.app</em><br><br>
-      <strong>Step 2 — Open that link in Chrome</strong><br>
-      Tap ⋮ → Add to Home Screen → done.<br><br>
-      <strong>Step 3 — Get your free Gemini key:</strong><br>
+      The <strong>Daily News Feed</strong>, <strong>Learning Plan</strong> and <strong>AI Quiz</strong> are powered by Google Gemini — completely free.<br><br>
+      <strong>Get your free Gemini key:</strong><br>
       👉 <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a><br>
-      Sign in with Google → Create API Key → paste below.
+      Sign in with Google → Create API Key → copy and paste it below.
     </p>
     <input type="password" class="api-input" id="apiKeyInput" placeholder="AIza...">
     <div class="setup-note">
       🔒 Your key is stored only on this device. Never shared anywhere except Google's Gemini API.
     </div>
-    <button class="btn-primary" onclick="saveApiKey()">Activate & Start Training</button>
+    <button class="btn-primary" onclick="saveApiKey()">Activate &amp; Start Training</button>
     <button class="btn-ghost" onclick="skipSetup()">Skip — use without AI features</button>
   </div>
+  </div>
 </div>
-
 <div class="notif" id="notif"></div>
 
 <div class="app" id="mainApp" style="display:none">
@@ -1355,12 +1356,13 @@ async function testGemini(){
     document.getElementById('testBar').classList.remove('show');
   }
 }
+function noKeyBox(areaId){
   document.getElementById(areaId).innerHTML=`<div class="no-key-box"><h3>🔑 No Gemini API Key</h3><p>Add your free Google Gemini API key to unlock the news feed, daily plans and quiz.</p><button class="btn-primary" style="max-width:200px;margin:0 auto;display:block" onclick="showSetup()">Add API Key</button></div>`;
 }
 
 // helper: clean JSON out of Gemini response (strips markdown fences)
 function cleanJSON(raw){
-  return raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  return raw.replace(/^```[\w]*\n?/gm,'').replace(/```$/gm,'').trim();
 }
 
 // ═══ DAILY HOME UPDATE (AI) ═══
@@ -1377,8 +1379,8 @@ async function refreshHomeAI(){
     `You are a cybersecurity daily trainer. Today is ${today}. The student is learning ${path}.
 Generate a fresh daily mission and a motivational tip for today.
 Return ONLY valid JSON, no markdown fences:
-{"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource. 2 sentences.","tip":"One sharp, practical mindset tip a ${path} student needs today. 1-2 sentences."}`,
-    null, null, false
+{"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource. 2 sentences.","tip":"One sharp practical mindset tip for a beginner today. 1-2 sentences."}`,
+    null, null
   );
   if(!result) return;
   try{
@@ -1403,10 +1405,10 @@ async function refreshScenarioAI(){
   if(cached){ document.getElementById('scenarioDrill').textContent=cached; return; }
   const result=await callAI(
     `Write ONE realistic cybersecurity investigation scenario for a beginner ${path} student to think through today (${today}). It should be a single paragraph describing a suspicious event they need to investigate. Be specific with details like times, ports, user behaviour. End with "Walk through your investigation steps." No JSON — just the scenario text, 3-5 sentences.`,
-    null, null, false
+    null, null
   );
   if(result){
-    const clean=result.trim().replace(/```/g,'');
+    const clean=result.trim().replace(/^```[\w]*\n?/gm,'').replace(/```$/gm,'').trim();
     localStorage.setItem(cacheKey, clean);
     document.getElementById('scenarioDrill').textContent=clean;
   }
@@ -1429,7 +1431,7 @@ async function refreshResourcesAI(){
     `Today is ${today}. Recommend 3 specific FREE learning resources for a beginner studying ${path}. Pick things that are genuinely useful right now — could be a YouTube video, a specific lab, a free course module or a news article.
 Return ONLY valid JSON array, no markdown:
 [{"type":"video|lab|article|course","name":"Resource name","url":"https://...","why":"One sentence why this is useful today for a ${path} student"}]`,
-    null, null, false
+    null, null
   );
   if(!result){ area.innerHTML=''; return; }
   try{
@@ -1472,7 +1474,7 @@ For each story provide:
 
 Return ONLY a valid JSON array, no markdown fences:
 [{"headline":"...","summary":"...","lesson":"...","source":"..."},{"headline":"...","summary":"...","lesson":"...","source":"..."},{"headline":"...","summary":"...","lesson":"...","source":"..."}]`,
-    'feedNewsBtn','newsBar',true
+    'feedNewsBtn','newsBar'
   );
   if(!result){area.innerHTML=`<div class="err-box">⚠️ Could not fetch news. Make sure your Gemini API key is valid and you have internet access. <br><br><small>Tip: Test your key at <a href="https://aistudio.google.com" target="_blank" style="color:var(--blue)">aistudio.google.com</a></small></div>`;return;}
   try{
@@ -1503,7 +1505,7 @@ async function generateDailyPlan(){
 Create exactly 4 tasks completable in 1–2 hours total. Every resource must be completely FREE.
 Return ONLY a valid JSON array, no markdown fences:
 [{"time":"15 min","task":"Short task title","action":"Exactly what to do and where","resource":"Resource name — URL","skill":"Skill being built"},{"time":"...","task":"...","action":"...","resource":"...","skill":"..."},{"time":"...","task":"...","action":"...","resource":"...","skill":"..."},{"time":"...","task":"...","action":"...","resource":"...","skill":"..."}]`,
-    'feedPlanBtn','planBar',false
+    'feedPlanBtn','planBar'
   );
   if(!result){area.innerHTML=`<div class="err-box">⚠️ Could not generate plan. Check your Gemini API key and internet connection.</div>`;return;}
   try{
@@ -1542,7 +1544,7 @@ async function generateQuiz(){
     `Generate ONE multiple choice cybersecurity question for a beginner learning ${path}. Vary topics each time — tools, attack types, log analysis, network protocols, incident response, malware, SIEM, threat intel or security concepts.
 Return ONLY valid JSON, absolutely no markdown fences or extra text:
 {"question":"Question text here?","options":["Full text of option A","Full text of option B","Full text of option C","Full text of option D"],"correct":0,"explanation":"2-3 sentences explaining why the answer is correct and what the student should learn."}`,
-    'genQuizBtn','quizBar',false
+    'genQuizBtn','quizBar'
   );
   if(!result){area.innerHTML=`<div class="err-box">⚠️ Could not generate question. Check your Gemini API key and internet connection.</div>`;updateQuizScore();return;}
   try{
