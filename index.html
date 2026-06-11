@@ -839,14 +839,19 @@ body {
   <div class="setup-box">
     <h2>Connect Google Gemini AI 🤖</h2>
     <p>
-      The <strong>Daily News Feed</strong>, <strong>Learning Plan</strong> and <strong>AI Quiz</strong> are powered by Google Gemini — completely free.<br><br>
-      <strong>Get your free Gemini key:</strong><br>
+      Add up to <strong>3 free Gemini API keys</strong>. The app automatically rotates to the next key if one hits its daily limit.<br><br>
       👉 <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a><br>
-      Sign in with Google → Create API Key → copy and paste it below.
+      Sign in with Google → Create API Key → paste below.<br><br>
+      <strong style="color:var(--green)">Tip:</strong> Use different Google accounts for each key to triple your free quota.
     </p>
-    <input type="password" class="api-input" id="apiKeyInput" placeholder="AIza...">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;">KEY 1 — required</div>
+    <input type="password" class="api-input" id="apiKey1" placeholder="AIza...">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;">KEY 2 — optional backup</div>
+    <input type="password" class="api-input" id="apiKey2" placeholder="AIza...">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;">KEY 3 — optional backup</div>
+    <input type="password" class="api-input" id="apiKey3" placeholder="AIza...">
     <div class="setup-note">
-      🔒 Your key is stored only on this device. Never shared anywhere except Google's Gemini API.
+      🔒 All keys stored only on this device. Never sent anywhere except directly to Google's Gemini API.
     </div>
     <button class="btn-primary" onclick="saveApiKey()">Activate &amp; Start Training</button>
     <button class="btn-ghost" onclick="skipSetup()">Skip — use without AI features</button>
@@ -861,7 +866,7 @@ body {
 <div class="key-bar">
   <div class="key-dot" id="keyDot"></div>
   <div class="key-text" id="keyText"></div>
-  <button class="key-change" onclick="showSetup()">Change Key</button>
+  <button class="key-change" onclick="showSetup()">Manage Keys</button>
 </div>
 
 <!-- HEADER -->
@@ -1137,13 +1142,21 @@ body {
 // ═══ STATE ═══
 let S=JSON.parse(localStorage.getItem('cm_s')||'null')||{streak:0,xp:0,daysActive:0,lastDate:'',alarms:[],habits:{},reminders:{},skills:{linux:5,net:5,siem:0,threat:0,ir:0},path:'soc'};
 const save=()=>localStorage.setItem('cm_s',JSON.stringify(S));
-const getKey=()=>localStorage.getItem('cm_key')||'';
+function getKeys(){ return ['cm_key1','cm_key2','cm_key3'].map(k=>localStorage.getItem(k)||'').filter(k=>k.length>5); }
+function getKey(){ return getKeys()[0]||''; }
 
 // ═══ SETUP ═══
 function saveApiKey(){
-  const k=document.getElementById('apiKeyInput').value.trim();
-  if(k.length < 10){ showNotif('⚠ Please enter a valid API key','error'); return; }
-  localStorage.setItem('cm_key',k); hideSetup(); showNotif('✅ Gemini key saved — AI features active','success');
+  const k1=document.getElementById('apiKey1').value.trim();
+  const k2=document.getElementById('apiKey2').value.trim();
+  const k3=document.getElementById('apiKey3').value.trim();
+  if(k1.length<10){ showNotif('⚠ Key 1 is required','error'); return; }
+  localStorage.setItem('cm_key1',k1);
+  if(k2.length>5) localStorage.setItem('cm_key2',k2); else localStorage.removeItem('cm_key2');
+  if(k3.length>5) localStorage.setItem('cm_key3',k3); else localStorage.removeItem('cm_key3');
+  const count=getKeys().length;
+  hideSetup();
+  showNotif('✅ '+count+' key'+(count>1?'s':'')+' saved — AI active','success');
 }
 function skipSetup(){ hideSetup(); }
 function hideSetup(){
@@ -1156,14 +1169,17 @@ function showSetup(){
   document.getElementById('setupScreen').classList.remove('hidden');
   document.getElementById('mainApp').style.display='none';
   document.getElementById('bottomNav').style.display='none';
-  const k=getKey(); if(k) document.getElementById('apiKeyInput').value=k;
+  ['cm_key1','cm_key2','cm_key3'].forEach((k,i)=>{
+    const el=document.getElementById('apiKey'+(i+1));
+    if(el) el.value=localStorage.getItem(k)||'';
+  });
 }
 function updateKeyBar(){
-  const k=getKey(),dot=document.getElementById('keyDot'),txt=document.getElementById('keyText');
-  if(k){dot.className='key-dot ok';txt.textContent='AI connected — features active';}
+  const keys=getKeys(),dot=document.getElementById('keyDot'),txt=document.getElementById('keyText');
+  if(keys.length){dot.className='key-dot ok';txt.textContent=keys.length+' API key'+(keys.length>1?'s':'')+' loaded — AI active';}
   else{dot.className='key-dot off';txt.textContent='No API key — AI features offline';}
 }
-window.addEventListener('load',()=>{ if(getKey()) hideSetup(); });
+window.addEventListener('load',()=>{ if(getKeys().length>0) hideSetup(); });
 
 // ═══ DATA ═══
 const missions=[
@@ -1277,83 +1293,80 @@ function selectPath(el,path){
   showNotif('Path: '+(pathNames[path]||path),'success');
 }
 
-// ═══ GEMINI AI CALL ═══
-// Works when app is hosted on https:// (Netlify, GitHub Pages etc.)
-// Does NOT work from file:// due to Android Chrome CORS policy
-async function callAI(prompt, btnId, barId){
-  const k=getKey();
-  if(!k){
+// ═══ GEMINI AI CALL WITH KEY ROTATION ═══
+async function callAI(prompt,btnId,barId){
+  const keys=getKeys();
+  if(!keys.length){
     if(btnId) document.getElementById(btnId).disabled=false;
     if(barId) document.getElementById(barId).classList.remove('show');
     return null;
   }
   if(btnId) document.getElementById(btnId).disabled=true;
   if(barId) document.getElementById(barId).classList.add('show');
-  try{
-    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
-    const res=await fetch(url,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[{role:'user',parts:[{text:prompt}]}],
-        generationConfig:{maxOutputTokens:1400,temperature:0.7}
-      })
-    });
-    if(!res.ok){
-      const e=await res.json();
-      const msg=e?.error?.message||'Unknown error';
-      console.error('Gemini API error:',msg);
-      showNotif('Gemini error: '+msg.slice(0,80),'error',6000);
-      return null;
+  const body=JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1400,temperature:0.7}});
+  let lastError='';
+  for(let i=0;i<keys.length;i++){
+    try{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='+keys[i],{method:'POST',headers:{'Content-Type':'application/json'},body});
+      if(res.ok){
+        const data=await res.json();
+        const text=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||null;
+        if(text){
+          if(i>0) showNotif('Switched to backup key '+(i+1),'success');
+          if(btnId) document.getElementById(btnId).disabled=false;
+          if(barId) document.getElementById(barId).classList.remove('show');
+          return text;
+        }
+      } else {
+        const e=await res.json();
+        const code=e?.error?.code;
+        lastError='Key '+(i+1)+': '+(e?.error?.message||'').slice(0,60);
+        console.warn('Key '+(i+1)+' failed ('+code+')');
+        if(code===404) break;
+      }
+    }catch(e){
+      lastError='Key '+(i+1)+' error: '+e.message;
     }
-    const data=await res.json();
-    return data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||null;
-  }catch(e){
-    console.error('callAI failed:',e.message);
-    return null;
-  }finally{
-    if(btnId) document.getElementById(btnId).disabled=false;
-    if(barId) document.getElementById(barId).classList.remove('show');
   }
+  showNotif('Failed: '+lastError.slice(0,70),'error',6000);
+  if(btnId) document.getElementById(btnId).disabled=false;
+  if(barId) document.getElementById(barId).classList.remove('show');
+  return null;
 }
 
 // ═══ DEBUG TEST ═══
 async function testGemini(){
-  const k=getKey();
+  const keys=getKeys();
   const out=document.getElementById('testResult');
   out.style.display='block';
-  if(!k){ out.textContent='❌ No API key stored. Go to setup and add your key.'; return; }
-  out.textContent='⏳ Sending test request to Gemini...\nKey: '+k.slice(0,8)+'...'+k.slice(-4)+'\n';
+  if(!keys.length){ out.textContent='❌ No API keys stored. Tap "Manage Keys" to add them.'; return; }
+  out.textContent='⏳ Testing '+keys.length+' key'+(keys.length>1?'s':'')+'...\n\n';
   document.getElementById('testBtn').disabled=true;
   document.getElementById('testBar').classList.add('show');
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
-  try{
-    const res=await fetch(url,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[{role:'user',parts:[{text:'Say "Hello CyberMind" and nothing else.'}]}],
-        generationConfig:{maxOutputTokens:20}
-      })
-    });
-    const raw=await res.text();
-    if(res.ok){
-      const data=JSON.parse(raw);
-      const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'(no text)';
-      out.textContent='✅ SUCCESS!\nStatus: '+res.status+'\nGemini replied: '+reply+'\n\nYour key works. If news still fails, tap Fetch News again.';
-    } else {
-      out.textContent='❌ API ERROR\nStatus: '+res.status+'\n\nFull response:\n'+raw;
+  for(let i=0;i<keys.length;i++){
+    const k=keys[i];
+    out.textContent+='KEY '+(i+1)+' ('+k.slice(0,8)+'...'+k.slice(-4)+'):\n';
+    try{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='+k,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user',parts:[{text:'Say "Hello CyberMind" only.'}]}],generationConfig:{maxOutputTokens:20}})
+      });
+      const raw=await res.text();
+      if(res.ok){
+        const data=JSON.parse(raw);
+        const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'(no text)';
+        out.textContent+='  ✅ OK — replied: '+reply+'\n\n';
+      } else {
+        const e=JSON.parse(raw);
+        out.textContent+='  ❌ '+e?.error?.code+' — '+e?.error?.message?.slice(0,80)+'\n\n';
+      }
+    }catch(e){
+      out.textContent+='  ❌ Network error: '+e.message+'\n\n';
     }
-  }catch(e){
-    out.textContent='❌ NETWORK ERROR\nType: '+e.name+'\nMessage: '+e.message+'\n\nThis means:\n'+(
-      e.message.includes('fetch')?
-      '→ CORS block. Your GitHub Pages URL may not be fully active yet.\n→ Wait 2-3 minutes after publishing and try again.\n→ Make sure you opened the GITHUB PAGES URL, not the local file.':
-      '→ Check your internet connection.'
-    );
-  }finally{
-    document.getElementById('testBtn').disabled=false;
-    document.getElementById('testBar').classList.remove('show');
   }
+  document.getElementById('testBtn').disabled=false;
+  document.getElementById('testBar').classList.remove('show');
 }
 function noKeyBox(areaId){
   document.getElementById(areaId).innerHTML=`<div class="no-key-box"><h3>🔑 No Gemini API Key</h3><p>Add your free Google Gemini API key to unlock the news feed, daily plans and quiz.</p><button class="btn-primary" style="max-width:200px;margin:0 auto;display:block" onclick="showSetup()">Add API Key</button></div>`;
