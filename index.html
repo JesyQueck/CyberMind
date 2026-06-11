@@ -896,6 +896,8 @@ body {
       <div class="stat-box"><span class="stat-num" id="xpCount">0</span><span class="stat-label">XP Earned ⚡</span></div>
       <div class="stat-box"><span class="stat-num" id="doneCount">0</span><span class="stat-label">Done Today ✓</span></div>
     </div>
+    <button class="btn-gen" id="homeAIBtn" onclick="refreshHomeAI()" style="margin-top:14px;margin-bottom:0;font-size:13px;padding:11px;">🤖 Generate Today's AI Mission</button>
+    <div class="loader" id="homeAIBar"></div>
   </div>
 
   <div class="sec-label">YOUR LEARNING PATH</div>
@@ -999,6 +1001,8 @@ body {
     <div class="scenario-label">🎯 THINK THROUGH THIS — DON'T SKIP IT</div>
     <div class="scenario-text" id="scenarioDrill">Loading...</div>
   </div>
+  <button class="btn-gen" id="scenarioBtn" onclick="refreshScenarioAI()" style="margin-top:10px;font-size:13px;padding:11px;">🤖 Generate New AI Scenario</button>
+  <div class="loader" id="scenarioBar"></div>
 
   <div class="sec-label" style="margin-top:20px">WHEN YOU READ NEWS, ASK:</div>
   <div class="card">
@@ -1220,12 +1224,7 @@ function init(){
   document.querySelectorAll('.path-card').forEach(c=>{c.classList.toggle('selected',c.dataset.path===S.path);});
   if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
   setTimeout(()=>S.alarms.forEach(scheduleAlarm),600);
-  // Daily AI updates — run after a short delay so the UI renders first
-  setTimeout(()=>{
-    refreshHomeAI();
-    refreshScenarioAI();
-    refreshResourcesAI();
-  }, 800);
+  // AI daily content loads on demand (tap buttons) to preserve free quota
 }
 function updateDateBar(){
   const d=new Date(),dy=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1291,7 +1290,7 @@ async function callAI(prompt, btnId, barId){
   if(btnId) document.getElementById(btnId).disabled=true;
   if(barId) document.getElementById(barId).classList.add('show');
   try{
-    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`;
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
     const res=await fetch(url,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -1327,7 +1326,7 @@ async function testGemini(){
   out.textContent='⏳ Sending test request to Gemini...\nKey: '+k.slice(0,8)+'...'+k.slice(-4)+'\n';
   document.getElementById('testBtn').disabled=true;
   document.getElementById('testBar').classList.add('show');
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
   try{
     const res=await fetch(url,{
       method:'POST',
@@ -1367,14 +1366,14 @@ function cleanJSON(raw){
 
 // ═══ DAILY HOME UPDATE (AI) ═══
 async function refreshHomeAI(){
-  if(!getKey()) return;
+  if(!getKey()){ showNotif('Add Gemini key first','error'); return; }
   const path=pathNames[S.path]||'SOC Analyst';
   const today=new Date().toDateString();
   const cacheKey='cm_home_'+today+'_'+S.path;
   const cached=localStorage.getItem(cacheKey);
-  if(cached){
-    try{ applyHomeAI(JSON.parse(cached)); return; }catch(e){}
-  }
+  if(cached){ try{ applyHomeAI(JSON.parse(cached)); showNotif('Mission loaded from cache','success'); return; }catch(e){} }
+  document.getElementById('homeAIBtn').disabled=true;
+  document.getElementById('homeAIBar').classList.add('show');
   const result=await callAI(
     `You are a cybersecurity daily trainer. Today is ${today}. The student is learning ${path}.
 Generate a fresh daily mission and a motivational tip for today.
@@ -1382,11 +1381,14 @@ Return ONLY valid JSON, no markdown fences:
 {"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource. 2 sentences.","tip":"One sharp practical mindset tip for a beginner today. 1-2 sentences."}`,
     null, null
   );
-  if(!result) return;
+  document.getElementById('homeAIBtn').disabled=false;
+  document.getElementById('homeAIBar').classList.remove('show');
+  if(!result){ showNotif('Could not generate mission','error'); return; }
   try{
     const obj=JSON.parse(cleanJSON(result));
     localStorage.setItem(cacheKey, JSON.stringify(obj));
     applyHomeAI(obj);
+    showNotif('✅ Mission updated!','success');
   }catch(e){ console.error('homeAI parse error',e); }
 }
 function applyHomeAI(obj){
@@ -1397,20 +1399,25 @@ function applyHomeAI(obj){
 
 // ═══ DAILY MINDSET SCENARIO (AI) ═══
 async function refreshScenarioAI(){
-  if(!getKey()) return;
+  if(!getKey()){ showNotif('Add Gemini key first','error'); return; }
   const path=pathNames[S.path]||'SOC Analyst';
   const today=new Date().toDateString();
   const cacheKey='cm_scenario_'+today+'_'+S.path;
   const cached=localStorage.getItem(cacheKey);
-  if(cached){ document.getElementById('scenarioDrill').textContent=cached; return; }
+  if(cached){ document.getElementById('scenarioDrill').textContent=cached; showNotif('Scenario loaded','success'); return; }
+  document.getElementById('scenarioBtn').disabled=true;
+  document.getElementById('scenarioBar').classList.add('show');
   const result=await callAI(
-    `Write ONE realistic cybersecurity investigation scenario for a beginner ${path} student to think through today (${today}). It should be a single paragraph describing a suspicious event they need to investigate. Be specific with details like times, ports, user behaviour. End with "Walk through your investigation steps." No JSON — just the scenario text, 3-5 sentences.`,
+    `Write ONE realistic cybersecurity investigation scenario for a beginner ${path} student to think through today. Describe a suspicious event with specific details like times, ports, user behaviour. End with "Walk through your investigation steps." Plain text only, 3-5 sentences.`,
     null, null
   );
+  document.getElementById('scenarioBtn').disabled=false;
+  document.getElementById('scenarioBar').classList.remove('show');
   if(result){
     const clean=result.trim().replace(/^```[\w]*\n?/gm,'').replace(/```$/gm,'').trim();
     localStorage.setItem(cacheKey, clean);
     document.getElementById('scenarioDrill').textContent=clean;
+    showNotif('✅ New scenario loaded!','success');
   }
 }
 
