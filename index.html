@@ -958,29 +958,29 @@ body {
 
 <!-- ══ RESOURCES ══ -->
 <div class="section" id="tab-resources">
-  <div class="sec-label">🤖 AI PICKS FOR TODAY</div>
-  <div id="aiResourceArea"><div style="padding:14px;color:var(--text2);font-size:13px;text-align:center">AI resource picks load automatically when you have a Gemini key.</div></div>
+  <div class="info-box info-blue" style="font-size:13px;">
+    🤖 AI finds real YouTube videos and articles for your path today. Results are cached so they only use quota <strong style="color:var(--text)">once per day</strong>.
+  </div>
 
-  <div class="sec-label">YOUTUBE CHANNELS</div>
-  <a class="res-card" href="https://youtube.com/@_JohnHammond" target="_blank"><div class="res-icon ri-video">▶️</div><div class="res-info"><div class="res-type rt-video">VIDEO</div><div class="res-name">John Hammond</div><div class="res-desc">Malware analysis, CTF walkthroughs, real hacking</div><div class="free-tag">FREE</div></div></a>
-  <a class="res-card" href="https://youtube.com/@SimplyCyber" target="_blank"><div class="res-icon ri-video">▶️</div><div class="res-info"><div class="res-type rt-video">VIDEO</div><div class="res-name">Simply Cyber</div><div class="res-desc">Daily security news + SOC analyst career advice</div><div class="free-tag">FREE</div></div></a>
-  <a class="res-card" href="https://youtube.com/@NetworkChuck" target="_blank"><div class="res-icon ri-video">▶️</div><div class="res-info"><div class="res-type rt-video">VIDEO</div><div class="res-name">NetworkChuck</div><div class="res-desc">Networking, Linux, hacking — fun and engaging</div><div class="free-tag">FREE</div></div></a>
-  <a class="res-card" href="https://youtube.com/@DavidBombal" target="_blank"><div class="res-icon ri-video">▶️</div><div class="res-info"><div class="res-type rt-video">VIDEO</div><div class="res-name">David Bombal</div><div class="res-desc">Deep networking, Python and ethical hacking</div><div class="free-tag">FREE</div></div></a>
+  <div class="sec-label">TODAY'S VIDEOS</div>
+  <button class="btn-gen" id="resVideosBtn" onclick="generateResourceVideos()" style="font-size:13px;padding:12px;">▶️ Find Videos For Me Today</button>
+  <div class="loader" id="resVideosBar"></div>
+  <div id="resVideosArea"></div>
 
-  <div class="sec-label">HANDS-ON LABS</div>
+  <div class="sec-label" style="margin-top:18px">TODAY'S ARTICLES</div>
+  <button class="btn-gen" id="resArticlesBtn" onclick="generateResourceArticles()" style="font-size:13px;padding:12px;">📰 Find Articles For Me Today</button>
+  <div class="loader" id="resArticlesBar"></div>
+  <div id="resArticlesArea"></div>
+
+  <div style="height:1px;background:var(--border);margin:22px 0;"></div>
+  <div class="sec-label">ALWAYS-ON FREE LABS</div>
   <a class="res-card" href="https://letsdefend.io" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">LetsDefend.io</div><div class="res-desc">SOC simulator — analyze real alerts like a Tier 1 analyst</div><div class="free-tag">FREE TIER</div></div></a>
   <a class="res-card" href="https://blueteamlabs.online" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">Blue Team Labs Online</div><div class="res-desc">Incident response and forensics challenges</div><div class="free-tag">FREE TIER</div></div></a>
-  <a class="res-card" href="https://cyberdefenders.org" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">CyberDefenders</div><div class="res-desc">Blue team CTF with real world breach scenarios</div><div class="free-tag">FREE</div></div></a>
+  <a class="res-card" href="https://cyberdefenders.org" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">CyberDefenders</div><div class="res-desc">Blue team CTF — real world breach scenarios</div><div class="free-tag">FREE</div></div></a>
   <a class="res-card" href="https://portswigger.net/web-security" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">PortSwigger Web Academy</div><div class="res-desc">Best free web hacking course on the internet</div><div class="free-tag">FREE</div></div></a>
   <a class="res-card" href="https://overthewire.org/wargames/bandit" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">OverTheWire: Bandit</div><div class="res-desc">Learn Linux by hacking — 34 progressive levels</div><div class="free-tag">FREE</div></div></a>
-  <a class="res-card" href="https://hackthebox.com" target="_blank"><div class="res-icon ri-lab">⚙️</div><div class="res-info"><div class="res-type rt-lab">LAB</div><div class="res-name">Hack The Box</div><div class="res-desc">Realistic machines for pen testers</div><div class="free-tag">FREE TIER</div></div></a>
 
-  <div class="sec-label">CYBERSECURITY NEWS</div>
-  <a class="res-card" href="https://therecord.media" target="_blank"><div class="res-icon ri-news">📰</div><div class="res-info"><div class="res-type rt-news">NEWS</div><div class="res-name">The Record</div><div class="res-desc">Clear, reliable cybersecurity journalism</div><div class="free-tag">FREE</div></div></a>
-  <a class="res-card" href="https://bleepingcomputer.com" target="_blank"><div class="res-icon ri-news">📰</div><div class="res-info"><div class="res-type rt-news">NEWS</div><div class="res-name">BleepingComputer</div><div class="res-desc">Breach news and malware — beginner friendly</div><div class="free-tag">FREE</div></div></a>
-  <a class="res-card" href="https://thehackernews.com" target="_blank"><div class="res-icon ri-news">📰</div><div class="res-info"><div class="res-type rt-news">NEWS</div><div class="res-name">The Hacker News</div><div class="res-desc">Latest vulnerabilities, exploits and security news</div><div class="free-tag">FREE</div></div></a>
-
-  <div class="sec-label">FREE CERTIFICATIONS</div>
+  <div class="sec-label" style="margin-top:18px">FREE CERTIFICATIONS</div>
   <a class="res-card" href="https://www.isc2.org/certifications/cc" target="_blank"><div class="res-icon ri-cert">🏅</div><div class="res-info"><div class="res-type rt-cert">CERT</div><div class="res-name">ISC² CC</div><div class="res-desc">Globally recognized entry-level cert — fully free exam</div><div class="free-tag">FREE EXAM</div></div></a>
   <a class="res-card" href="https://skillsforall.com" target="_blank"><div class="res-icon ri-cert">🏅</div><div class="res-info"><div class="res-type rt-cert">CERT</div><div class="res-name">Cisco Skills for All</div><div class="res-desc">Networking and cybersecurity with free certificates</div><div class="free-tag">FREE</div></div></a>
   <a class="res-card" href="https://www.coursera.org/professional-certificates/google-cybersecurity" target="_blank"><div class="res-icon ri-cert">🏅</div><div class="res-info"><div class="res-type rt-cert">CERT</div><div class="res-name">Google Cybersecurity Cert</div><div class="res-desc">Audit free on Coursera — covers SOC tools and workflow</div><div class="free-tag">AUDIT FREE</div></div></a>
@@ -988,26 +988,38 @@ body {
 
 <!-- ══ MINDSET ══ -->
 <div class="section" id="tab-mindset">
-  <div class="tip-box">
+
+  <!-- Daily AI tip — loads from cache or button -->
+  <div class="tip-box" id="tipBox">
     <div class="tip-label">// DAILY MINDSET TIP</div>
-    <div class="tip-text" id="dailyTip">Loading...</div>
+    <div class="tip-text" id="dailyTip">Loading your daily tip...</div>
+  </div>
+  <button class="btn-gen" id="mindsetRefreshBtn" onclick="refreshMindsetAI()" style="font-size:13px;padding:11px;margin-bottom:20px;">🤖 Refresh Today's AI Content</button>
+  <div class="loader" id="mindsetBar"></div>
+
+  <!-- AI Principle of the Day -->
+  <div class="sec-label">TODAY'S FOCUS PRINCIPLE</div>
+  <div class="principle" id="principleOfDay">
+    <div class="principle-num" id="principleNum">LOADING...</div>
+    <div class="principle-title" id="principleTitle">Generating your focus for today...</div>
+    <div class="principle-body" id="principleBody"></div>
   </div>
 
-  <div class="sec-label">CORE PRINCIPLES</div>
-  <div class="principle"><div class="principle-num">01 — THINK LIKE THE ATTACKER</div><div class="principle-title">To defend, you must understand how systems break</div><div class="principle-body">Every day ask: "If I wanted to attack this, how would I?" This single habit is the foundation of the security mindset and separates curious learners from real analysts.</div></div>
-  <div class="principle"><div class="principle-num">02 — EVERYTHING TELLS A STORY</div><div class="principle-title">Logs, timestamps and IPs are clues — not noise</div><div class="principle-body">A SOC analyst is a digital detective. Train yourself to find patterns: timestamps, login locations, data volumes, protocol anomalies. Every artifact means something.</div></div>
-  <div class="principle"><div class="principle-num">03 — CURIOSITY IS YOUR SUPERPOWER</div><div class="principle-title">Ask why it works, not just how to use it</div><div class="principle-body">You don't need to memorize everything. You need to know how to think through answers. When something works, ask why. When it breaks, ask how. That instinct is irreplaceable.</div></div>
-  <div class="principle"><div class="principle-num">04 — VERIFY, NEVER ASSUME</div><div class="principle-title">Safe-looking is not the same as safe</div><div class="principle-body">Attackers blend in. A "normal" login from a known user account can be the start of a breach. Never assume something is benign without checking the context around it.</div></div>
-  <div class="principle"><div class="principle-num">05 — DOCUMENT EVERYTHING</div><div class="principle-title">Your journal is proof of growth</div><div class="principle-body">Write down what you learn, what confused you, what finally clicked. Your security journal is both a learning accelerator and powerful evidence of skill growth when job hunting.</div></div>
-  <div class="principle"><div class="principle-num">06 — CONSISTENCY BEATS INTENSITY</div><div class="principle-title">1 hour daily beats 7 hours on Sunday</div><div class="principle-body">Your brain builds security instincts through repetition, not cramming. Show up every day — even 30 focused minutes — and in 6 months you will not recognize how far you have come.</div></div>
+  <!-- Static core principles — always visible -->
+  <div class="sec-label" style="margin-top:4px">CORE PRINCIPLES</div>
+  <div class="principle"><div class="principle-num">01 — THINK LIKE THE ATTACKER</div><div class="principle-title">To defend, you must understand how systems break</div><div class="principle-body">Every day ask: "If I wanted to attack this, how would I?" This single habit is the foundation of the security mindset.</div></div>
+  <div class="principle"><div class="principle-num">02 — EVERYTHING TELLS A STORY</div><div class="principle-title">Logs, timestamps and IPs are clues — not noise</div><div class="principle-body">A SOC analyst is a digital detective. Train yourself to find patterns in timestamps, login locations, data volumes, and protocol anomalies.</div></div>
+  <div class="principle"><div class="principle-num">03 — CURIOSITY IS YOUR SUPERPOWER</div><div class="principle-title">Ask why it works, not just how to use it</div><div class="principle-body">When something works, ask why. When it breaks, ask how. That instinct is irreplaceable and cannot be googled.</div></div>
+  <div class="principle"><div class="principle-num">04 — VERIFY, NEVER ASSUME</div><div class="principle-title">Safe-looking is not the same as safe</div><div class="principle-body">Attackers blend in. Never assume something is benign without checking the full context around it.</div></div>
+  <div class="principle"><div class="principle-num">05 — DOCUMENT EVERYTHING</div><div class="principle-title">Your journal is proof of growth</div><div class="principle-body">Write down what you learn, what confused you, what finally clicked. Your security journal is your most powerful career tool.</div></div>
+  <div class="principle"><div class="principle-num">06 — CONSISTENCY BEATS INTENSITY</div><div class="principle-title">1 hour daily beats 7 hours on Sunday</div><div class="principle-body">Your brain builds security instincts through repetition, not cramming. Show up every day — even 30 minutes counts.</div></div>
 
-  <div class="sec-label" style="margin-top:24px">TODAY'S SCENARIO DRILL</div>
+  <!-- AI Scenario -->
+  <div class="sec-label" style="margin-top:20px">TODAY'S SCENARIO DRILL</div>
   <div class="scenario-box">
     <div class="scenario-label">🎯 THINK THROUGH THIS — DON'T SKIP IT</div>
-    <div class="scenario-text" id="scenarioDrill">Loading...</div>
+    <div class="scenario-text" id="scenarioDrill">Tap "Refresh Today's AI Content" above to generate a scenario.</div>
   </div>
-  <button class="btn-gen" id="scenarioBtn" onclick="refreshScenarioAI()" style="margin-top:10px;font-size:13px;padding:11px;">🤖 Generate New AI Scenario</button>
-  <div class="loader" id="scenarioBar"></div>
 
   <div class="sec-label" style="margin-top:20px">WHEN YOU READ NEWS, ASK:</div>
   <div class="card">
@@ -1027,13 +1039,40 @@ body {
     <div class="score-box"><span class="score-num" id="quizTotal">0</span><span class="score-lbl">Total</span></div>
     <div class="score-box"><span class="score-num" id="quizPct">—</span><span class="score-lbl">Accuracy</span></div>
   </div>
-  <button class="btn-gen" id="genQuizBtn" onclick="generateQuiz()">⚡ Generate New Question</button>
+
+  <!-- Topic selector -->
+  <div class="sec-label">QUIZ TOPIC</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;" id="topicRow">
+    <button class="tag-btn sel-learning" data-topic="random" onclick="selectTopic(this)">🎲 Random</button>
+    <button class="tag-btn" data-topic="networking" onclick="selectTopic(this)">🌐 Networking</button>
+    <button class="tag-btn" data-topic="malware" onclick="selectTopic(this)">🦠 Malware</button>
+    <button class="tag-btn" data-topic="siem" onclick="selectTopic(this)">📊 SIEM & Logs</button>
+    <button class="tag-btn" data-topic="incidents" onclick="selectTopic(this)">🚨 Incident Response</button>
+    <button class="tag-btn" data-topic="threats" onclick="selectTopic(this)">🎯 Threat Intel</button>
+    <button class="tag-btn" data-topic="tools" onclick="selectTopic(this)">🔧 Security Tools</button>
+    <button class="tag-btn" data-topic="web" onclick="selectTopic(this)">🌍 Web Security</button>
+  </div>
+
+  <button class="btn-gen" id="genQuizBtn" onclick="generateQuiz()">⚡ Generate Question</button>
   <div class="loader" id="quizBar"></div>
+
+  <!-- Daily quiz progress -->
+  <div class="sec-label">TODAY'S PROGRESS</div>
+  <div class="card" style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:14px;color:var(--text2);">Questions today</span>
+      <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--green)" id="todayCount">0 / 5 goal</span>
+    </div>
+    <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;">
+      <div id="todayBar" style="height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:4px;transition:width .5s ease;width:0%"></div>
+    </div>
+  </div>
+
   <div id="quizArea">
     <div class="card" style="text-align:center;padding:32px;">
       <div style="font-size:32px;margin-bottom:12px;">🧪</div>
       <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">Ready to test your knowledge?</div>
-      <div style="font-size:14px;color:var(--text2);">Tap the button above to get an AI-generated question tailored to your chosen path.</div>
+      <div style="font-size:14px;color:var(--text2);">Pick a topic above then tap Generate. Each correct answer earns +20 XP.</div>
     </div>
   </div>
 </div>
@@ -1293,7 +1332,8 @@ function selectPath(el,path){
   showNotif('Path: '+(pathNames[path]||path),'success');
 }
 
-// ═══ GEMINI AI CALL WITH KEY ROTATION ═══
+// ═══ GEMINI AI CALL WITH KEY + MODEL ROTATION ═══
+const MODELS=['gemini-3.1-flash-lite','gemini-2.0-flash-lite','gemini-2.0-flash','gemini-2.5-flash'];
 async function callAI(prompt,btnId,barId){
   const keys=getKeys();
   if(!keys.length){
@@ -1305,30 +1345,34 @@ async function callAI(prompt,btnId,barId){
   if(barId) document.getElementById(barId).classList.add('show');
   const body=JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1400,temperature:0.7}});
   let lastError='';
-  for(let i=0;i<keys.length;i++){
-    try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+keys[i],{method:'POST',headers:{'Content-Type':'application/json'},body});
-      if(res.ok){
-        const data=await res.json();
-        const text=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||null;
-        if(text){
-          if(i>0) showNotif('Switched to backup key '+(i+1),'success');
-          if(btnId) document.getElementById(btnId).disabled=false;
-          if(barId) document.getElementById(barId).classList.remove('show');
-          return text;
+  // Try each key, and for each key try each model
+  for(let ki=0;ki<keys.length;ki++){
+    for(let mi=0;mi<MODELS.length;mi++){
+      try{
+        const url='https://generativelanguage.googleapis.com/v1beta/models/'+MODELS[mi]+':generateContent?key='+keys[ki];
+        const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body});
+        if(res.ok){
+          const data=await res.json();
+          const text=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||null;
+          if(text){
+            if(ki>0||mi>0) showNotif('Using key '+(ki+1)+' / '+MODELS[mi],'success');
+            if(btnId) document.getElementById(btnId).disabled=false;
+            if(barId) document.getElementById(barId).classList.remove('show');
+            return text;
+          }
+        } else {
+          const e=await res.json();
+          const code=e?.error?.code;
+          lastError='K'+(ki+1)+'/'+MODELS[mi]+': '+(e?.error?.message||'').slice(0,50);
+          if(code===429) continue; // quota — try next model/key
+          if(code===404) break;    // model not found — try next model
         }
-      } else {
-        const e=await res.json();
-        const code=e?.error?.code;
-        lastError='Key '+(i+1)+': '+(e?.error?.message||'').slice(0,60);
-        console.warn('Key '+(i+1)+' failed ('+code+')');
-        if(code===404) break;
+      }catch(e){
+        lastError='K'+(ki+1)+' network: '+e.message;
       }
-    }catch(e){
-      lastError='Key '+(i+1)+' error: '+e.message;
     }
   }
-  showNotif('Failed: '+lastError.slice(0,70),'error',6000);
+  showNotif('All keys & models quota exhausted. Try again tomorrow.','error',6000);
   if(btnId) document.getElementById(btnId).disabled=false;
   if(barId) document.getElementById(barId).classList.remove('show');
   return null;
@@ -1357,12 +1401,30 @@ async function testGemini(){
       out.textContent+='⚠ Could not list models: '+(e?.error?.message||'').slice(0,80)+'\n\n';
     }
   }catch(e){ out.textContent+='⚠ List models error: '+e.message+'\n\n'; }
-  // Step 2: test each key with current model
+  // Step 2: test each model on key 1 to find working ones
+  out.textContent+='🔍 Testing models on Key 1:\n';
+  const testModels=['gemini-3.1-flash-lite','gemini-2.0-flash-lite','gemini-2.0-flash','gemini-2.5-flash'];
+  for(const model of testModels){
+    try{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+keys[0],{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user',parts:[{text:'Say "OK" only.'}]}],generationConfig:{maxOutputTokens:5}})
+      });
+      if(res.ok){ out.textContent+='  ✅ '+model+'\n'; }
+      else {
+        const e=await res.json();
+        out.textContent+='  ❌ '+model+' → '+e?.error?.code+'\n';
+      }
+    }catch(e){ out.textContent+='  ❌ '+model+' → '+e.message+'\n'; }
+  }
+  out.textContent+='\n';
+  // Step 3: test each key with first working model
   for(let i=0;i<keys.length;i++){
     const k=keys[i];
     out.textContent+='KEY '+(i+1)+' ('+k.slice(0,8)+'...'+k.slice(-4)+'):\n';
     try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+k,{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key='+k,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({contents:[{role:'user',parts:[{text:'Say "Hello CyberMind" only.'}]}],generationConfig:{maxOutputTokens:20}})
@@ -1391,20 +1453,79 @@ function cleanJSON(raw){
 }
 
 // ═══ DAILY HOME UPDATE (AI) ═══
+// ═══ MINDSET AI — UNIFIED ═══
+async function refreshMindsetAI(){
+  if(!getKey()){ showNotif('Add Gemini key first','error'); return; }
+  const path=pathNames[S.path]||'SOC Analyst';
+  const today=new Date().toDateString();
+  const cacheKey='cm_mindset_'+today+'_'+S.path;
+  const cached=localStorage.getItem(cacheKey);
+  if(cached){
+    try{ applyMindsetAI(JSON.parse(cached)); showNotif('Loaded from cache','success'); return; }catch(e){}
+  }
+  document.getElementById('mindsetRefreshBtn').disabled=true;
+  document.getElementById('mindsetBar').classList.add('show');
+  const result=await callAI(
+    `You are a cybersecurity mindset coach. Today is ${today}. The student is learning ${path}.
+Generate ALL of the following for today. Return ONLY valid JSON, no markdown:
+{
+  "tip": "One sharp, specific, practical mindset tip for a ${path} beginner today. 1-2 sentences. Make it feel personal and relevant.",
+  "principle_focus": "Which of these to focus on today: Attacker Mindset / Pattern Recognition / Curiosity / Verify Everything / Document / Consistency",
+  "principle_why": "2-3 sentences on why THIS principle matters most today for someone learning ${path}. Be specific and motivating.",
+  "scenario": "A realistic ${path} investigation scenario with specific details like times, IPs, port numbers, user behaviour. 3-4 sentences. End with: Walk through your investigation steps.",
+  "challenge": "One tiny hands-on challenge they can do in 10 minutes today using a free tool. Be very specific about what to do and where."
+}`,
+    null, null
+  );
+  document.getElementById('mindsetRefreshBtn').disabled=false;
+  document.getElementById('mindsetBar').classList.remove('show');
+  if(!result){ showNotif('Could not load mindset content','error'); return; }
+  try{
+    const obj=JSON.parse(cleanJSON(result));
+    localStorage.setItem(cacheKey,JSON.stringify(obj));
+    applyMindsetAI(obj);
+    showNotif('✅ Mindset updated!','success');
+  }catch(e){ console.error('mindset parse error',e); showNotif('Parse error — try again','error'); }
+}
+
+function applyMindsetAI(obj){
+  if(obj.tip) document.getElementById('dailyTip').textContent=obj.tip;
+  if(obj.principle_focus){
+    document.getElementById('principleNum').textContent='TODAY — '+obj.principle_focus.toUpperCase();
+    document.getElementById('principleTitle').textContent=obj.principle_focus;
+    document.getElementById('principleBody').textContent=obj.principle_why||'';
+  }
+  if(obj.scenario) document.getElementById('scenarioDrill').textContent=obj.scenario;
+  // Add challenge card if present
+  if(obj.challenge){
+    let el=document.getElementById('challengeCard');
+    if(!el){
+      const sec=document.getElementById('scenarioDrill').closest('.scenario-box');
+      const div=document.createElement('div');
+      div.className='card accent-green';
+      div.id='challengeCard';
+      div.style.marginTop='12px';
+      sec.after(div);
+      el=div;
+    }
+    el.innerHTML=`<div class="card-label label-green">⚡ 10-MINUTE CHALLENGE</div><div class="card-body">${obj.challenge}</div>`;
+  }
+}
+
+// Keep refreshHomeAI for the home button
 async function refreshHomeAI(){
   if(!getKey()){ showNotif('Add Gemini key first','error'); return; }
   const path=pathNames[S.path]||'SOC Analyst';
   const today=new Date().toDateString();
   const cacheKey='cm_home_'+today+'_'+S.path;
   const cached=localStorage.getItem(cacheKey);
-  if(cached){ try{ applyHomeAI(JSON.parse(cached)); showNotif('Mission loaded from cache','success'); return; }catch(e){} }
+  if(cached){ try{ applyHomeAI(JSON.parse(cached)); showNotif('Loaded from cache','success'); return; }catch(e){} }
   document.getElementById('homeAIBtn').disabled=true;
   document.getElementById('homeAIBar').classList.add('show');
   const result=await callAI(
     `You are a cybersecurity daily trainer. Today is ${today}. The student is learning ${path}.
-Generate a fresh daily mission and a motivational tip for today.
-Return ONLY valid JSON, no markdown fences:
-{"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource. 2 sentences.","tip":"One sharp practical mindset tip for a beginner today. 1-2 sentences."}`,
+Generate a fresh daily mission. Return ONLY valid JSON, no markdown:
+{"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource. 2 sentences."}`,
     null, null
   );
   document.getElementById('homeAIBtn').disabled=false;
@@ -1412,83 +1533,84 @@ Return ONLY valid JSON, no markdown fences:
   if(!result){ showNotif('Could not generate mission','error'); return; }
   try{
     const obj=JSON.parse(cleanJSON(result));
-    localStorage.setItem(cacheKey, JSON.stringify(obj));
+    localStorage.setItem(cacheKey,JSON.stringify(obj));
     applyHomeAI(obj);
     showNotif('✅ Mission updated!','success');
-  }catch(e){ console.error('homeAI parse error',e); }
+  }catch(e){ console.error('homeAI error',e); }
 }
 function applyHomeAI(obj){
   if(obj.mission_title) document.getElementById('missionTitle').textContent=obj.mission_title;
   if(obj.mission_desc)  document.getElementById('missionDesc').textContent=obj.mission_desc;
-  if(obj.tip)           document.getElementById('dailyTip').textContent=obj.tip;
 }
 
-// ═══ DAILY MINDSET SCENARIO (AI) ═══
-async function refreshScenarioAI(){
-  if(!getKey()){ showNotif('Add Gemini key first','error'); return; }
-  const path=pathNames[S.path]||'SOC Analyst';
-  const today=new Date().toDateString();
-  const cacheKey='cm_scenario_'+today+'_'+S.path;
-  const cached=localStorage.getItem(cacheKey);
-  if(cached){ document.getElementById('scenarioDrill').textContent=cached; showNotif('Scenario loaded','success'); return; }
-  document.getElementById('scenarioBtn').disabled=true;
-  document.getElementById('scenarioBar').classList.add('show');
-  const result=await callAI(
-    `Write ONE realistic cybersecurity investigation scenario for a beginner ${path} student to think through today. Describe a suspicious event with specific details like times, ports, user behaviour. End with "Walk through your investigation steps." Plain text only, 3-5 sentences.`,
-    null, null
-  );
-  document.getElementById('scenarioBtn').disabled=false;
-  document.getElementById('scenarioBar').classList.remove('show');
-  if(result){
-    const clean=result.trim().replace(/^```[\w]*\n?/gm,'').replace(/```$/gm,'').trim();
-    localStorage.setItem(cacheKey, clean);
-    document.getElementById('scenarioDrill').textContent=clean;
-    showNotif('✅ New scenario loaded!','success');
-  }
-}
+// Kept for backward compat — now handled by refreshMindsetAI
+async function refreshScenarioAI(){ refreshMindsetAI(); }
 
-// ═══ DAILY RESOURCES (AI) ═══
-async function refreshResourcesAI(){
-  if(!getKey()) return;
+// ═══ RESOURCES — VIDEOS ═══
+async function generateResourceVideos(){
+  const area=document.getElementById('resVideosArea');
+  if(!getKey()){ noKeyBox('resVideosArea'); return; }
   const path=pathNames[S.path]||'SOC Analyst';
   const today=new Date().toDateString();
-  const cacheKey='cm_res_'+today+'_'+S.path;
+  const cacheKey='cm_resv_'+today+'_'+S.path;
   const cached=localStorage.getItem(cacheKey);
-  const area=document.getElementById('aiResourceArea');
-  if(!area) return;
-  if(cached){
-    try{ renderAIResources(JSON.parse(cached)); return; }catch(e){}
-  }
-  area.innerHTML=`<div style="padding:14px;color:var(--text2);font-size:13px;text-align:center">🤖 Loading today's recommended resources...</div>`;
+  if(cached){ try{ renderResCards(JSON.parse(cached),'resVideosArea','video'); showNotif('Loaded from cache','success'); return; }catch(e){} }
+  area.innerHTML=`<div style="padding:14px;color:var(--text2);font-size:13px;text-align:center">🔍 Finding videos for you...</div>`;
   const result=await callAI(
-    `Today is ${today}. Recommend 3 specific FREE learning resources for a beginner studying ${path}. Pick things that are genuinely useful right now — could be a YouTube video, a specific lab, a free course module or a news article.
-Return ONLY valid JSON array, no markdown:
-[{"type":"video|lab|article|course","name":"Resource name","url":"https://...","why":"One sentence why this is useful today for a ${path} student"}]`,
-    null, null
+    `You are a cybersecurity learning assistant. Recommend 4 specific FREE YouTube videos that a beginner learning ${path} should watch this week.
+For each video give a real YouTube video title that actually exists, the channel name, the YouTube search URL (https://www.youtube.com/results?search_query=...), and a 1-sentence reason why it helps a ${path} beginner.
+Return ONLY a valid JSON array, no markdown:
+[{"title":"Exact video title","channel":"Channel name","url":"https://www.youtube.com/results?search_query=exact+title","reason":"Why this helps"},{"title":"...","channel":"...","url":"...","reason":"..."},{"title":"...","channel":"...","url":"...","reason":"..."},{"title":"...","channel":"...","url":"...","reason":"..."}]`,
+    'resVideosBtn','resVideosBar'
   );
-  if(!result){ area.innerHTML=''; return; }
+  if(!result){ area.innerHTML=`<div class="err-box">Could not load videos. Try again later.</div>`; return; }
   try{
     const items=JSON.parse(cleanJSON(result));
-    localStorage.setItem(cacheKey, JSON.stringify(items));
-    renderAIResources(items);
-  }catch(e){ area.innerHTML=''; }
+    localStorage.setItem(cacheKey,JSON.stringify(items));
+    renderResCards(items,'resVideosArea','video');
+    S.xp+=5; save(); updateStats(); showNotif('+5 XP — Videos loaded!','success');
+  }catch(e){ area.innerHTML=`<div class="err-box">Parse error. Try again.</div>`; }
 }
-function renderAIResources(items){
-  const area=document.getElementById('aiResourceArea');
+
+// ═══ RESOURCES — ARTICLES ═══
+async function generateResourceArticles(){
+  const area=document.getElementById('resArticlesArea');
+  if(!getKey()){ noKeyBox('resArticlesArea'); return; }
+  const path=pathNames[S.path]||'SOC Analyst';
+  const today=new Date().toDateString();
+  const cacheKey='cm_resa_'+today+'_'+S.path;
+  const cached=localStorage.getItem(cacheKey);
+  if(cached){ try{ renderResCards(JSON.parse(cached),'resArticlesArea','article'); showNotif('Loaded from cache','success'); return; }catch(e){} }
+  area.innerHTML=`<div style="padding:14px;color:var(--text2);font-size:13px;text-align:center">🔍 Finding articles for you...</div>`;
+  const result=await callAI(
+    `You are a cybersecurity learning assistant. Recommend 4 specific FREE articles or blog posts that a beginner learning ${path} should read this week. Use real sources like BleepingComputer, The Hacker News, SANS, Krebs on Security, Medium security blogs, or official documentation.
+Return ONLY a valid JSON array, no markdown:
+[{"title":"Article title","source":"Publication name","url":"https://real-url.com/article","summary":"1-2 sentence summary of what this teaches a ${path} beginner"},{"title":"...","source":"...","url":"...","summary":"..."},{"title":"...","source":"...","url":"...","summary":"..."},{"title":"...","source":"...","url":"...","summary":"..."}]`,
+    'resArticlesBtn','resArticlesBar'
+  );
+  if(!result){ area.innerHTML=`<div class="err-box">Could not load articles. Try again later.</div>`; return; }
+  try{
+    const items=JSON.parse(cleanJSON(result));
+    localStorage.setItem(cacheKey,JSON.stringify(items));
+    renderResCards(items,'resArticlesArea','article');
+    S.xp+=5; save(); updateStats(); showNotif('+5 XP — Articles loaded!','success');
+  }catch(e){ area.innerHTML=`<div class="err-box">Parse error. Try again.</div>`; }
+}
+
+function renderResCards(items,areaId,type){
+  const area=document.getElementById(areaId);
   if(!area) return;
-  const icons={video:'▶️',lab:'⚙️',article:'📰',course:'🎓'};
-  const colors={video:'ri-video rt-video',lab:'ri-lab rt-lab',article:'ri-news rt-news',course:'ri-cert rt-cert'};
-  area.innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:10px;">🤖 AI PICKS FOR TODAY</div>`+
-    items.map(r=>`
-      <a class="res-card" href="${r.url||'#'}" target="_blank">
-        <div class="res-icon ${(colors[r.type]||'ri-news').split(' ')[0]}">${icons[r.type]||'🔗'}</div>
-        <div class="res-info">
-          <div class="res-type ${(colors[r.type]||'rt-news').split(' ')[1]}">${(r.type||'RESOURCE').toUpperCase()}</div>
-          <div class="res-name">${r.name}</div>
-          <div class="res-desc">${r.why}</div>
-          <div class="free-tag">FREE</div>
-        </div>
-      </a>`).join('');
+  const isVideo=type==='video';
+  area.innerHTML=items.map(r=>`
+    <a class="res-card" href="${r.url||'#'}" target="_blank">
+      <div class="res-icon ${isVideo?'ri-video':'ri-news'}">${isVideo?'▶️':'📰'}</div>
+      <div class="res-info">
+        <div class="res-type ${isVideo?'rt-video':'rt-news'}">${isVideo?'VIDEO — '+r.channel:'ARTICLE — '+r.source}</div>
+        <div class="res-name">${r.title}</div>
+        <div class="res-desc">${r.reason||r.summary||''}</div>
+        <div class="free-tag">FREE</div>
+      </div>
+    </a>`).join('');
 }
 
 // ═══ DAILY FEED ═══
