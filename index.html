@@ -1307,7 +1307,7 @@ async function callAI(prompt,btnId,barId){
   let lastError='';
   for(let i=0;i<keys.length;i++){
     try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+keys[i],{method:'POST',headers:{'Content-Type':'application/json'},body});
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+keys[i],{method:'POST',headers:{'Content-Type':'application/json'},body});
       if(res.ok){
         const data=await res.json();
         const text=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||null;
@@ -1340,14 +1340,29 @@ async function testGemini(){
   const out=document.getElementById('testResult');
   out.style.display='block';
   if(!keys.length){ out.textContent='❌ No API keys stored. Tap "Manage Keys" to add them.'; return; }
-  out.textContent='⏳ Testing '+keys.length+' key'+(keys.length>1?'s':'')+'...\n\n';
   document.getElementById('testBtn').disabled=true;
   document.getElementById('testBar').classList.add('show');
+  out.textContent='⏳ Testing '+keys.length+' key'+(keys.length>1?'s':'')+'...\n\n';
+  // Step 1: list available models from key 1
+  try{
+    const listRes=await fetch('https://generativelanguage.googleapis.com/v1beta/models?key='+keys[0]);
+    if(listRes.ok){
+      const listData=await listRes.json();
+      const names=(listData.models||[])
+        .map(m=>m.name.replace('models/',''))
+        .filter(n=>n.toLowerCase().includes('gemini'));
+      out.textContent+='📋 Models available on Key 1:\n'+names.join('\n')+'\n\n';
+    } else {
+      const e=await listRes.json();
+      out.textContent+='⚠ Could not list models: '+(e?.error?.message||'').slice(0,80)+'\n\n';
+    }
+  }catch(e){ out.textContent+='⚠ List models error: '+e.message+'\n\n'; }
+  // Step 2: test each key with current model
   for(let i=0;i<keys.length;i++){
     const k=keys[i];
     out.textContent+='KEY '+(i+1)+' ('+k.slice(0,8)+'...'+k.slice(-4)+'):\n';
     try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+k,{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+k,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({contents:[{role:'user',parts:[{text:'Say "Hello CyberMind" only.'}]}],generationConfig:{maxOutputTokens:20}})
@@ -1356,14 +1371,12 @@ async function testGemini(){
       if(res.ok){
         const data=JSON.parse(raw);
         const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'(no text)';
-        out.textContent+='  ✅ OK — replied: '+reply+'\n\n';
+        out.textContent+='  ✅ OK — '+reply.trim()+'\n\n';
       } else {
         const e=JSON.parse(raw);
-        out.textContent+='  ❌ '+e?.error?.code+' — '+e?.error?.message?.slice(0,80)+'\n\n';
+        out.textContent+='  ❌ '+e?.error?.code+' — '+e?.error?.message?.slice(0,100)+'\n\n';
       }
-    }catch(e){
-      out.textContent+='  ❌ Network error: '+e.message+'\n\n';
-    }
+    }catch(e){ out.textContent+='  ❌ '+e.message+'\n\n'; }
   }
   document.getElementById('testBtn').disabled=false;
   document.getElementById('testBar').classList.remove('show');
