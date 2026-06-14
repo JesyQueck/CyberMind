@@ -674,6 +674,63 @@ body {
 .roadmap-step:last-child { border-bottom: none; }
 .rdot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
 
+/* ── LEVEL / TIME SELECTORS ── */
+.level-opt.selected, .time-opt.selected {
+  border-color: var(--green) !important;
+  color: var(--green) !important;
+  background: var(--green-bg) !important;
+}
+
+/* ── PHASE CARDS ── */
+.phase-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; margin-bottom: 10px;
+  cursor: pointer; transition: all .2s;
+}
+.phase-card:hover { border-color: var(--border2); }
+.phase-card.current { border-color: var(--green); background: linear-gradient(135deg, var(--green-bg), var(--card)); }
+.phase-card.done { opacity: .6; }
+.phase-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.phase-card-num {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text3); letter-spacing: 2px;
+}
+.phase-card.current .phase-card-num { color: var(--green); }
+.phase-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 6px;
+}
+.badge-current { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,217,138,.3); }
+.badge-done { background: var(--bg3); color: var(--text3); }
+.badge-locked { background: var(--bg3); color: var(--text3); }
+.phase-card-title { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+.phase-card-goal { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+.phase-steps { display: none; }
+.phase-steps.show { display: block; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.phase-step-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.phase-step-check {
+  width: 20px; height: 20px; border-radius: 5px;
+  border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  transition: all .2s; cursor: pointer;
+}
+.phase-step-check.done { background: var(--green); border-color: var(--green); color: #041a10; }
+.phase-step-text.done { color: var(--text3); text-decoration: line-through; }
+.phase-progress-bg {
+  height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 8px;
+}
+.phase-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--green2), var(--green));
+  border-radius: 3px; transition: width .5s ease;
+}
+
 /* ── BUTTONS ── */
 .btn-gen {
   width: 100%;
@@ -881,6 +938,7 @@ body {
 <!-- TOP NAV -->
 <div class="nav">
   <button class="nav-btn active"  onclick="showTab('home')">🏠 Home</button>
+  <button class="nav-btn" onclick="showTab('roadmap')">🗺️ Roadmap</button>
   <button class="nav-btn" onclick="showTab('feed')">📡 Daily Feed</button>
   <button class="nav-btn" onclick="showTab('resources')">🔗 Resources</button>
   <button class="nav-btn" onclick="showTab('mindset')">🧠 Mindset</button>
@@ -931,6 +989,61 @@ body {
 
   <div class="sec-label">TODAY'S HABITS</div>
   <div class="habit-list" id="habitList"></div>
+</div>
+
+<!-- ══ ROADMAP ══ -->
+<div class="section" id="tab-roadmap">
+
+  <!-- No roadmap yet -->
+  <div id="roadmapEmpty" class="card" style="text-align:center;padding:28px;">
+    <div style="font-size:36px;margin-bottom:12px;">🗺️</div>
+    <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px;">Build Your Personal Roadmap</div>
+    <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
+      Tell the AI where you're starting from and it will build a step-by-step, completely-from-scratch curriculum just for you — broken into small phases you can actually follow.
+    </div>
+  </div>
+
+  <!-- Level selector (shown when generating/regenerating) -->
+  <div id="roadmapSetup" class="card">
+    <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:12px;">📍 Where are you starting from?</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;" id="levelRow">
+      <button class="quick-btn level-opt" data-level="absolute" onclick="selectLevel(this)">🌱 Absolute beginner — never used Linux, don't know networking basics</button>
+      <button class="quick-btn level-opt" data-level="basics" onclick="selectLevel(this)">🌿 Some basics — comfortable with computers, shaky on Linux/networking</button>
+      <button class="quick-btn level-opt" data-level="some" onclick="selectLevel(this)">🌳 Some experience — done a few tutorials/labs, know basic terms</button>
+      <button class="quick-btn level-opt" data-level="intermediate" onclick="selectLevel(this)">🌲 Intermediate — comfortable with fundamentals, want to specialize</button>
+    </div>
+    <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:12px;">⏱️ How much time per day?</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;" id="timeRow">
+      <button class="day-btn time-opt" data-time="30 minutes" onclick="selectTime(this)" style="flex:1;padding:12px 0;">30 min</button>
+      <button class="day-btn time-opt" data-time="1 hour" onclick="selectTime(this)" style="flex:1;padding:12px 0;">1 hr</button>
+      <button class="day-btn time-opt" data-time="2 hours" onclick="selectTime(this)" style="flex:1;padding:12px 0;">2 hrs</button>
+      <button class="day-btn time-opt" data-time="3+ hours" onclick="selectTime(this)" style="flex:1;padding:12px 0;">3+ hrs</button>
+    </div>
+    <button class="btn-gen solid" id="genRoadmapBtn" onclick="generateRoadmap()">🤖 Build My Roadmap</button>
+    <div class="loader" id="roadmapBar"></div>
+  </div>
+
+  <!-- Generated roadmap -->
+  <div id="roadmapContent" style="display:none;">
+    <div class="card accent-green" id="roadmapHeader" style="text-align:center;">
+      <div style="font-size:11px;font-family:var(--mono);color:var(--green);letter-spacing:2px;margin-bottom:6px;" id="roadmapPathLabel">YOUR ROADMAP</div>
+      <div style="font-size:17px;font-weight:800;color:var(--white);margin-bottom:6px;" id="roadmapTitle">—</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;" id="roadmapSummary">—</div>
+    </div>
+
+    <!-- Current phase highlight -->
+    <div class="sec-label" style="margin-top:18px">📍 YOU ARE HERE</div>
+    <div class="scenario-box" id="currentPhaseBox">
+      <div class="scenario-label" id="currentPhaseLabel">PHASE 1</div>
+      <div style="font-size:16px;font-weight:700;color:var(--white);margin:6px 0 8px;" id="currentPhaseTitle">—</div>
+      <div class="scenario-text" id="currentPhaseGoal">—</div>
+    </div>
+
+    <div class="sec-label" style="margin-top:18px">ALL PHASES</div>
+    <div id="phaseList"></div>
+
+    <button class="btn-gen" id="regenRoadmapBtn" onclick="showRoadmapSetup()" style="margin-top:16px;font-size:13px;padding:12px;">🔄 Rebuild My Roadmap</button>
+  </div>
 </div>
 
 <!-- ══ DAILY FEED ══ -->
@@ -1171,7 +1284,7 @@ body {
 <!-- BOTTOM NAV -->
 <div class="bottom-nav" id="bottomNav" style="display:none">
   <button class="bnav-btn active" onclick="showTab('home')">🏠<span>Home</span></button>
-  <button class="bnav-btn" onclick="showTab('feed')">📡<span>Feed</span></button>
+  <button class="bnav-btn" onclick="showTab('roadmap')">🗺️<span>Roadmap</span></button>
   <button class="bnav-btn" onclick="showTab('quiz')">🧪<span>Quiz</span></button>
   <button class="bnav-btn" onclick="showTab('journal')">📝<span>Journal</span></button>
   <button class="bnav-btn" onclick="showTab('alarm')">⏰<span>Remind</span></button>
@@ -1179,7 +1292,7 @@ body {
 
 <script>
 // ═══ STATE ═══
-let S=JSON.parse(localStorage.getItem('cm_s')||'null')||{streak:0,xp:0,daysActive:0,lastDate:'',alarms:[],habits:{},reminders:{},skills:{linux:5,net:5,siem:0,threat:0,ir:0},path:'soc'};
+let S=JSON.parse(localStorage.getItem('cm_s')||'null')||{streak:0,xp:0,daysActive:0,lastDate:'',alarms:[],habits:{},reminders:{},skills:{linux:5,net:5,siem:0,threat:0,ir:0},path:'soc',level:'',timePerDay:'1 hour',roadmap:null,currentPhase:0};
 const save=()=>localStorage.setItem('cm_s',JSON.stringify(S));
 function getKeys(){ return ['cm_key1','cm_key2','cm_key3'].map(k=>localStorage.getItem(k)||'').filter(k=>k.length>5); }
 function getKey(){ return getKeys()[0]||''; }
@@ -1275,7 +1388,7 @@ const pathNames={soc:'SOC Analyst',pentest:'Penetration Testing',forensics:'Digi
 function init(){
   updateDateBar();checkStreak();renderMission();renderHabits();
   renderAlarms();renderProgress();renderDailyTip();renderScenario();
-  renderJournal();renderReminders();updateStats();
+  renderJournal();renderReminders();updateStats();renderRoadmapTab();
   document.querySelectorAll('.path-card').forEach(c=>{c.classList.toggle('selected',c.dataset.path===S.path);});
   if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
   setTimeout(()=>S.alarms.forEach(scheduleAlarm),600);
@@ -1330,6 +1443,226 @@ function selectPath(el,path){
   document.querySelectorAll('.path-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');S.path=path;save();
   showNotif('Path: '+(pathNames[path]||path),'success');
+}
+
+// ═══ ROADMAP — LEVEL/TIME SELECTORS ═══
+let pendingLevel=S.level||'';
+let pendingTime=S.timePerDay||'1 hour';
+function selectLevel(el){
+  document.querySelectorAll('.level-opt').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  pendingLevel=el.dataset.level;
+}
+function selectTime(el){
+  document.querySelectorAll('.time-opt').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  pendingTime=el.dataset.time;
+}
+function showRoadmapSetup(){
+  document.getElementById('roadmapEmpty').style.display='none';
+  document.getElementById('roadmapContent').style.display='none';
+  document.getElementById('roadmapSetup').style.display='block';
+  // pre-select existing choices
+  if(pendingLevel){
+    document.querySelectorAll('.level-opt').forEach(b=>{ if(b.dataset.level===pendingLevel) b.classList.add('selected'); });
+  }
+  document.querySelectorAll('.time-opt').forEach(b=>{ if(b.dataset.time===pendingTime) b.classList.add('selected'); });
+}
+
+const levelLabels={
+  absolute:'Absolute beginner — never used Linux, no networking knowledge',
+  basics:'Some basics — comfortable with computers, shaky on Linux/networking',
+  some:'Some experience — done a few tutorials/labs, knows basic terms',
+  intermediate:'Intermediate — comfortable with fundamentals, ready to specialize'
+};
+
+// ═══ GENERATE ROADMAP (AI) ═══
+async function generateRoadmap(){
+  if(!getKey()){ showNotif('Add Gemini key first','error'); return; }
+  if(!pendingLevel){ showNotif('⚠ Pick your starting level first','error'); return; }
+  const path=pathNames[S.path]||'SOC Analyst';
+  const levelDesc=levelLabels[pendingLevel]||pendingLevel;
+  const result=await callAI(
+    `You are an expert cybersecurity mentor designing a completely personalized, from-scratch learning roadmap.
+
+Student profile:
+- Goal path: ${path}
+- Current level: ${levelDesc}
+- Time available per day: ${pendingTime}
+
+Build a roadmap broken into PHASES, starting from their actual current level (do not skip fundamentals if they are a beginner; do not waste time on basics if they are intermediate). Each phase should feel achievable and build directly on the previous one. Include phases for absolute fundamentals (if needed), core skills, tools/labs, and finally path specialization and job-readiness.
+
+Use 6 to 10 phases depending on their level (beginners get more phases with smaller steps).
+
+For each phase provide:
+- title: short clear name
+- goal: 1-2 sentences on what they will be ABLE TO DO after this phase (skills-based, motivating)
+- duration: realistic estimate given their daily time (e.g. "1-2 weeks")
+- steps: 3-5 specific, concrete action items (e.g. "Complete OverTheWire Bandit levels 0-10" not "learn Linux")
+
+Return ONLY valid JSON, no markdown:
+{
+  "title": "Short roadmap title, e.g. 'From Zero to SOC Analyst'",
+  "summary": "2-3 sentence overview of the journey and what they'll achieve by the end",
+  "phases": [
+    {"title":"Phase title","goal":"What they can do after this phase","duration":"estimate","steps":["step 1","step 2","step 3","step 4"]}
+  ]
+}`,
+    'genRoadmapBtn','roadmapBar'
+  );
+  if(!result){ showNotif('Could not generate roadmap','error'); return; }
+  try{
+    const obj=JSON.parse(cleanJSON(result));
+    if(!obj.phases||!obj.phases.length) throw new Error('no phases');
+    S.level=pendingLevel;
+    S.timePerDay=pendingTime;
+    S.roadmap=obj;
+    S.currentPhase=0;
+    // init step completion tracking
+    S.roadmapProgress=obj.phases.map(p=>p.steps.map(()=>false));
+    save();
+    renderRoadmapTab();
+    showNotif('✅ Your roadmap is ready!','success');
+  }catch(e){ console.error('roadmap parse error',e); showNotif('Parse error — try again','error'); }
+}
+
+// ═══ RENDER ROADMAP TAB ═══
+function renderRoadmapTab(){
+  const empty=document.getElementById('roadmapEmpty');
+  const setup=document.getElementById('roadmapSetup');
+  const content=document.getElementById('roadmapContent');
+  if(!empty||!setup||!content) return; // not on this tab's DOM yet
+  if(!S.roadmap || !Array.isArray(S.roadmap.phases) || S.roadmap.phases.length===0){
+    empty.style.display='block';
+    setup.style.display='block';
+    content.style.display='none';
+    return;
+  }
+  empty.style.display='none';
+  setup.style.display='none';
+  content.style.display='block';
+
+  const r=S.roadmap;
+
+  // Normalize phases — guarantee steps is always a non-empty array
+  r.phases.forEach(p=>{
+    if(!Array.isArray(p.steps) || p.steps.length===0) p.steps=['Review this phase\'s goal and plan your approach'];
+    p.title = p.title || 'Untitled Phase';
+    p.goal = p.goal || '';
+    p.duration = p.duration || '';
+  });
+
+  document.getElementById('roadmapPathLabel').textContent='YOUR ROADMAP — '+(pathNames[S.path]||S.path||'').toUpperCase();
+  document.getElementById('roadmapTitle').textContent=r.title||'Your Roadmap';
+  document.getElementById('roadmapSummary').textContent=r.summary||'';
+
+  // Clamp currentPhase into valid range
+  let cp=S.currentPhase||0;
+  if(cp<0) cp=0;
+  if(cp>=r.phases.length) cp=r.phases.length-1;
+  S.currentPhase=cp;
+
+  // Current phase highlight
+  const phase=r.phases[cp];
+  if(phase){
+    document.getElementById('currentPhaseLabel').textContent='PHASE '+(cp+1)+' OF '+r.phases.length+(phase.duration?' — '+phase.duration:'');
+    document.getElementById('currentPhaseTitle').textContent=phase.title;
+    document.getElementById('currentPhaseGoal').textContent=phase.goal;
+  }
+
+  // Ensure roadmapProgress matches phases/steps shape exactly
+  if(!Array.isArray(S.roadmapProgress) || S.roadmapProgress.length!==r.phases.length){
+    S.roadmapProgress=r.phases.map(p=>p.steps.map(()=>false));
+  } else {
+    S.roadmapProgress=r.phases.map((p,pi)=>{
+      const existing=S.roadmapProgress[pi];
+      if(!Array.isArray(existing)) return p.steps.map(()=>false);
+      // Pad or trim to match current step count
+      const out=p.steps.map((_,si)=>existing[si]===true);
+      return out;
+    });
+  }
+  save();
+
+  // All phases list
+  document.getElementById('phaseList').innerHTML=r.phases.map((p,pi)=>{
+    const progress=S.roadmapProgress[pi]||[];
+    const doneCount=progress.filter(Boolean).length;
+    const pct=p.steps.length?Math.round(doneCount/p.steps.length*100):0;
+    const isCurrent=pi===cp;
+    const isComplete=pct===100;
+    const cardClass='phase-card'+(isCurrent?' current':'')+(isComplete&&!isCurrent?' done':'');
+    const badge=isCurrent?'<span class="phase-badge badge-current">CURRENT</span>':(isComplete?'<span class="phase-badge badge-done">✓ DONE</span>':'');
+    return `<div class="${cardClass}" onclick="togglePhaseSteps(${pi})">
+      <div class="phase-card-head">
+        <span class="phase-card-num">PHASE ${pi+1} · ${escapeHtml(p.duration)}</span>
+        ${badge}
+      </div>
+      <div class="phase-card-title">${escapeHtml(p.title)}</div>
+      <div class="phase-card-goal">${escapeHtml(p.goal)}</div>
+      <div class="phase-progress-bg"><div class="phase-progress-fill" style="width:${pct}%"></div></div>
+      <div class="phase-steps" id="phaseSteps${pi}">
+        ${p.steps.map((s,si)=>`
+          <div class="phase-step-item">
+            <div class="phase-step-check ${progress[si]?'done':''}" onclick="event.stopPropagation();togglePhaseStep(${pi},${si})">${progress[si]?'✓':''}</div>
+            <div class="phase-step-text ${progress[si]?'done':''}">${escapeHtml(s)}</div>
+          </div>`).join('')}
+        ${!isCurrent?`<button class="btn-gen" style="margin-top:10px;font-size:12px;padding:9px;" onclick="event.stopPropagation();setCurrentPhase(${pi})">📍 Set as current phase</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// escape user/AI-provided text before injecting into innerHTML
+function escapeHtml(str){
+  if(str==null) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+function togglePhaseSteps(pi){
+  const el=document.getElementById('phaseSteps'+pi);
+  if(el) el.classList.toggle('show');
+}
+function togglePhaseStep(pi,si){
+  if(!S.roadmap || !Array.isArray(S.roadmap.phases) || !S.roadmap.phases[pi]) return;
+  if(!Array.isArray(S.roadmapProgress) || !Array.isArray(S.roadmapProgress[pi])) return;
+  if(si<0 || si>=S.roadmapProgress[pi].length) return;
+  S.roadmapProgress[pi][si]=!S.roadmapProgress[pi][si];
+  // small XP reward
+  if(S.roadmapProgress[pi][si]){ S.xp+=10; showNotif('+10 XP — Step complete!','success'); }
+  save();
+  updateStats();
+  renderRoadmapTab();
+  // re-open the steps panel after re-render
+  const el=document.getElementById('phaseSteps'+pi);
+  if(el) el.classList.add('show');
+  // Auto-advance current phase if fully complete
+  const r=S.roadmap;
+  if(pi===S.currentPhase){
+    const allDone=S.roadmapProgress[pi].length>0 && S.roadmapProgress[pi].every(Boolean);
+    if(allDone && pi<r.phases.length-1){
+      S.currentPhase=pi+1; save();
+      showNotif('🎉 Phase complete! Moving to Phase '+(pi+2),'success');
+      setTimeout(renderRoadmapTab,800);
+    }
+  }
+}
+function setCurrentPhase(pi){
+  if(!S.roadmap || !Array.isArray(S.roadmap.phases) || pi<0 || pi>=S.roadmap.phases.length) return;
+  S.currentPhase=pi; save(); renderRoadmapTab();
+  showNotif('📍 Current phase set to Phase '+(pi+1),'success');
+}
+
+// ═══ SHARED: get current phase context for all AI prompts ═══
+function getLevelContext(){
+  if(!S.roadmap || !Array.isArray(S.roadmap.phases) || S.roadmap.phases.length===0) return '';
+  const idx=(S.currentPhase!=null && S.currentPhase>=0 && S.currentPhase<S.roadmap.phases.length) ? S.currentPhase : 0;
+  const phase=S.roadmap.phases[idx];
+  if(!phase) return '';
+  return `The student is currently on Phase ${S.currentPhase+1} of their roadmap: "${phase.title}". Phase goal: ${phase.goal}. Their current focus steps are: ${phase.steps.join('; ')}. IMPORTANT: keep all content strictly at this phase's difficulty level — do not assume knowledge beyond this phase, and do not make it easier than this phase either.`;
 }
 
 // ═══ GEMINI AI CALL WITH KEY + MODEL ROTATION ═══
@@ -1465,15 +1798,17 @@ async function refreshMindsetAI(){
   }
   document.getElementById('mindsetRefreshBtn').disabled=true;
   document.getElementById('mindsetBar').classList.add('show');
+  const levelCtx=getLevelContext();
   const result=await callAI(
     `You are a cybersecurity mindset coach. Today is ${today}. The student is learning ${path}.
+${levelCtx||'The student is a beginner — keep everything simple, concrete, and avoid jargon without explanation.'}
 Generate ALL of the following for today. Return ONLY valid JSON, no markdown:
 {
-  "tip": "One sharp, specific, practical mindset tip for a ${path} beginner today. 1-2 sentences. Make it feel personal and relevant.",
+  "tip": "One sharp, specific, practical mindset tip matched to the student's current phase. 1-2 sentences. Make it feel personal and relevant.",
   "principle_focus": "Which of these to focus on today: Attacker Mindset / Pattern Recognition / Curiosity / Verify Everything / Document / Consistency",
-  "principle_why": "2-3 sentences on why THIS principle matters most today for someone learning ${path}. Be specific and motivating.",
-  "scenario": "A realistic ${path} investigation scenario with specific details like times, IPs, port numbers, user behaviour. 3-4 sentences. End with: Walk through your investigation steps.",
-  "challenge": "One tiny hands-on challenge they can do in 10 minutes today using a free tool. Be very specific about what to do and where."
+  "principle_why": "2-3 sentences on why THIS principle matters most today, written for someone at the student's exact current phase. Be specific and motivating.",
+  "scenario": "A realistic investigation/practice scenario matched EXACTLY to the student's current phase — do not assume tools or knowledge beyond their phase. Specific details like times, IPs, port numbers, or commands as appropriate for their level. 3-4 sentences. End with: Walk through your investigation steps.",
+  "challenge": "One tiny hands-on challenge they can do in 10 minutes today, using only free tools, matched to their current phase. Be very specific about what to do and where."
 }`,
     null, null
   );
@@ -1522,10 +1857,12 @@ async function refreshHomeAI(){
   if(cached){ try{ applyHomeAI(JSON.parse(cached)); showNotif('Loaded from cache','success'); return; }catch(e){} }
   document.getElementById('homeAIBtn').disabled=true;
   document.getElementById('homeAIBar').classList.add('show');
+  const levelCtx=getLevelContext();
   const result=await callAI(
     `You are a cybersecurity daily trainer. Today is ${today}. The student is learning ${path}.
-Generate a fresh daily mission. Return ONLY valid JSON, no markdown:
-{"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource. 2 sentences."}`,
+${levelCtx||'The student is a beginner — keep it simple and very concrete, no jargon without a quick explanation.'}
+Generate a fresh daily mission scoped EXACTLY to the student's current phase — pull the task from their current phase's steps if possible, or something that directly builds toward it. Return ONLY valid JSON, no markdown:
+{"mission_title":"Short energetic mission name (max 5 words)","mission_desc":"What the student should do today — specific, actionable, uses a free resource, matched to their current phase. 2 sentences."}`,
     null, null
   );
   document.getElementById('homeAIBtn').disabled=false;
@@ -1556,11 +1893,13 @@ async function generateResourceVideos(){
   const cached=localStorage.getItem(cacheKey);
   if(cached){ try{ renderResCards(JSON.parse(cached),'resVideosArea','video'); showNotif('Loaded from cache','success'); return; }catch(e){} }
   area.innerHTML=`<div style="padding:14px;color:var(--text2);font-size:13px;text-align:center">🔍 Finding videos for you...</div>`;
+  const levelCtx=getLevelContext();
   const result=await callAI(
-    `You are a cybersecurity learning assistant. Recommend 4 specific FREE YouTube videos that a beginner learning ${path} should watch this week.
-For each video give a real YouTube video title that actually exists, the channel name, the YouTube search URL (https://www.youtube.com/results?search_query=...), and a 1-sentence reason why it helps a ${path} beginner.
+    `You are a cybersecurity learning assistant. Recommend 4 specific FREE YouTube videos for someone learning ${path}.
+${levelCtx||'The student is a beginner — pick introductory videos, nothing that assumes prior experience.'}
+For each video give a real YouTube video title that actually exists, the channel name, the YouTube search URL (https://www.youtube.com/results?search_query=...), and a 1-sentence reason why it helps the student RIGHT NOW at their current phase.
 Return ONLY a valid JSON array, no markdown:
-[{"title":"Exact video title","channel":"Channel name","url":"https://www.youtube.com/results?search_query=exact+title","reason":"Why this helps"},{"title":"...","channel":"...","url":"...","reason":"..."},{"title":"...","channel":"...","url":"...","reason":"..."},{"title":"...","channel":"...","url":"...","reason":"..."}]`,
+[{"title":"Exact video title","channel":"Channel name","url":"https://www.youtube.com/results?search_query=exact+title","reason":"Why this helps right now"},{"title":"...","channel":"...","url":"...","reason":"..."},{"title":"...","channel":"...","url":"...","reason":"..."},{"title":"...","channel":"...","url":"...","reason":"..."}]`,
     'resVideosBtn','resVideosBar'
   );
   if(!result){ area.innerHTML=`<div class="err-box">Could not load videos. Try again later.</div>`; return; }
@@ -1582,10 +1921,13 @@ async function generateResourceArticles(){
   const cached=localStorage.getItem(cacheKey);
   if(cached){ try{ renderResCards(JSON.parse(cached),'resArticlesArea','article'); showNotif('Loaded from cache','success'); return; }catch(e){} }
   area.innerHTML=`<div style="padding:14px;color:var(--text2);font-size:13px;text-align:center">🔍 Finding articles for you...</div>`;
+  const levelCtx=getLevelContext();
   const result=await callAI(
-    `You are a cybersecurity learning assistant. Recommend 4 specific FREE articles or blog posts that a beginner learning ${path} should read this week. Use real sources like BleepingComputer, The Hacker News, SANS, Krebs on Security, Medium security blogs, or official documentation.
+    `You are a cybersecurity learning assistant. Recommend 4 specific FREE articles or blog posts for someone learning ${path}.
+${levelCtx||'The student is a beginner — pick introductory, plain-English articles with no assumed prior knowledge.'}
+Use real sources like BleepingComputer, The Hacker News, SANS, Krebs on Security, Medium security blogs, or official documentation. Match the reading level and topic to the student's current phase exactly.
 Return ONLY a valid JSON array, no markdown:
-[{"title":"Article title","source":"Publication name","url":"https://real-url.com/article","summary":"1-2 sentence summary of what this teaches a ${path} beginner"},{"title":"...","source":"...","url":"...","summary":"..."},{"title":"...","source":"...","url":"...","summary":"..."},{"title":"...","source":"...","url":"...","summary":"..."}]`,
+[{"title":"Article title","source":"Publication name","url":"https://real-url.com/article","summary":"1-2 sentence summary of what this teaches and why it matters right now"},{"title":"...","source":"...","url":"...","summary":"..."},{"title":"...","source":"...","url":"...","summary":"..."},{"title":"...","source":"...","url":"...","summary":"..."}]`,
     'resArticlesBtn','resArticlesBar'
   );
   if(!result){ area.innerHTML=`<div class="err-box">Could not load articles. Try again later.</div>`; return; }
@@ -1619,12 +1961,14 @@ async function generateNewsFeed(){
   if(!getKey()){noKeyBox('newsFeedArea');return;}
   area.innerHTML=`<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px;">🔍 Searching the web for today's cyber news...</div>`;
   const path=pathNames[S.path]||'SOC Analyst';
+  const levelCtx=getLevelContext();
   const result=await callAI(
     `Search the web and find 3 real cybersecurity news stories from this week relevant to someone learning ${path}. Use sources like BleepingComputer, The Record, The Hacker News or Krebs on Security.
+${levelCtx||'The student is a beginner — explain everything in plain English, avoiding unexplained jargon.'}
 For each story provide:
 - headline: punchy title under 12 words
-- summary: 2-3 plain English sentences a beginner understands
-- lesson: 1-2 sentence key takeaway for a ${path} student
+- summary: 2-3 plain English sentences someone at the student's level can fully understand
+- lesson: 1-2 sentence key takeaway connected to what the student is currently learning
 - source: publication name
 
 Return ONLY a valid JSON array, no markdown fences:
@@ -1655,9 +1999,11 @@ async function generateDailyPlan(){
   area.innerHTML=`<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px;">🤖 Building your personalised plan for today...</div>`;
   const path=pathNames[S.path]||'SOC Analyst';
   const day=new Date().toLocaleDateString('en',{weekday:'long'});
+  const levelCtx=getLevelContext();
   const result=await callAI(
-    `You are a cybersecurity trainer. Build a practical daily learning plan for a beginner studying ${path}. Today is ${day}.
-Create exactly 4 tasks completable in 1–2 hours total. Every resource must be completely FREE.
+    `You are a cybersecurity trainer. Build a practical daily learning plan for a student studying ${path}. Today is ${day}.
+${levelCtx||'The student is a beginner — pick only introductory tasks that need zero prior knowledge.'}
+Create exactly 4 tasks completable in ${S.timePerDay||'1-2 hours'} total. Every resource must be completely FREE. Tasks should connect directly to the student's current phase steps where possible.
 Return ONLY a valid JSON array, no markdown fences:
 [{"time":"15 min","task":"Short task title","action":"Exactly what to do and where","resource":"Resource name — URL","skill":"Skill being built"},{"time":"...","task":"...","action":"...","resource":"...","skill":"..."},{"time":"...","task":"...","action":"...","resource":"...","skill":"..."},{"time":"...","task":"...","action":"...","resource":"...","skill":"..."}]`,
     'feedPlanBtn','planBar'
@@ -1695,8 +2041,11 @@ async function generateQuiz(){
   if(!getKey()){noKeyBox('quizArea');return;}
   area.innerHTML='';
   const path=pathNames[S.path]||'SOC Analyst';
+  const levelCtx=getLevelContext();
   const result=await callAI(
-    `Generate ONE multiple choice cybersecurity question for a beginner learning ${path}. Vary topics each time — tools, attack types, log analysis, network protocols, incident response, malware, SIEM, threat intel or security concepts.
+    `Generate ONE multiple choice cybersecurity question for someone learning ${path}.
+${levelCtx||'The student is a beginner — keep the question fundamental, no jargon without context.'}
+The question MUST be appropriate for the student's CURRENT phase only — do not test knowledge from later phases, and do not make it too easy if they are past basics. Vary topics each time within their phase — tools, attack types, log analysis, network protocols, incident response, malware, SIEM, threat intel or security concepts as relevant to their phase.
 Return ONLY valid JSON, absolutely no markdown fences or extra text:
 {"question":"Question text here?","options":["Full text of option A","Full text of option B","Full text of option C","Full text of option D"],"correct":0,"explanation":"2-3 sentences explaining why the answer is correct and what the student should learn."}`,
     'genQuizBtn','quizBar'
@@ -1826,8 +2175,8 @@ function renderProgress(){
 }
 
 // ═══ NAV ═══
-const allTabs=['home','feed','resources','mindset','quiz','journal','alarm','progress'];
-const bnTabs=['home','feed','quiz','journal','alarm'];
+const allTabs=['home','roadmap','feed','resources','mindset','quiz','journal','alarm','progress'];
+const bnTabs=['home','roadmap','quiz','journal','alarm'];
 function showTab(tab){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1838,6 +2187,7 @@ function showTab(tab){
   if(tab==='journal')renderJournal();
   if(tab==='quiz')updateQuizScore();
   if(tab==='progress')renderProgress();
+  if(tab==='roadmap')renderRoadmapTab();
 }
 document.getElementById('daysRow').addEventListener('click',e=>{if(e.target.classList.contains('day-btn'))e.target.classList.toggle('on');});
 
